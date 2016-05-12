@@ -1,0 +1,12 @@
+Metadata-Version: 1.1
+Name: pycproject
+Version: 0.0.2+dev
+Summary: Provides basic function to read a ContentMine CProject and CTrees into python datastructures.
+Home-page: http://github.com/ContentMine/pyCProject
+Author: Christopher Kittel
+Author-email: web@christopherkittel.eu
+License: MIT
+Description: UNKNOWN
+Platform: UNKNOWN
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3 :: Only

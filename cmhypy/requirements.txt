@@ -1,0 +1,18 @@
+beautifulsoup4==4.4.1
+cycler==0.10.0
+decorator==4.0.9
+-e git+https://github.com/tarrow/hypothesisapi.git@f1db9b3014a58d3bd7bb9b9818e0ad18d40eccef#egg=hypothesisapi
+isodate==0.5.4
+keepalive==0.5
+lxml==3.6.0
+matplotlib==1.5.1
+networkx==1.11
+numpy==1.11.0
+-e git+https://github.com/ContentMine/pyCProject.git@12e4c0ec73650049704edc99a85bc8f6c8a3458e#egg=pycproject
+pyparsing==2.1.1
+python-dateutil==2.5.3
+pytz==2016.4
+rdflib==4.2.1
+requests==2.10.0
+six==1.10.0
+SPARQLWrapper==1.7.6
