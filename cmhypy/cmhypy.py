@@ -73,5 +73,4 @@ cproject = CProject("./", args.cproject)
 
 
 for ctree in cproject.get_ctrees():
-    #annotate_EuropePMC_from_CTree(ctree, H)
-    pass
+    annotate_EuropePMC_from_CTree(ctree, H)
