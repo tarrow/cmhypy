@@ -9,7 +9,8 @@ To run this script you should clone this repository somewhere local.
 
 You should also make a virtualenv to keep the packages from this script from cluttering up your system wide selection of packages.
  
-```virtualenv cmhypy-virtualenv
+```
+virtualenv cmhypy-virtualenv
 source cmhypy-virtualenv/bin/activate
 pip install -r <path to where you cloned this repo>/cmhypy/requirements.txt
 ```
