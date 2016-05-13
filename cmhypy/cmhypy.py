@@ -3,6 +3,7 @@ from pycproject.readctree import CProject
 import argparse
 from SPARQLWrapper import SPARQLWrapper, JSON
 
+
 def payload_builder(url, annotation_content, annotation_pre=None, annotation_exact=None, annotation_suffix=None):
     if len(annotation_pre)>32:
         annotation_pre=annotation_pre[-32:]
@@ -17,28 +18,29 @@ def payload_builder(url, annotation_content, annotation_pre=None, annotation_exa
                                   "prefix": annotation_pre,
                                   "exact": annotation_exact,
                                   "suffix": annotation_suffix
-                                  },
-                                 {"type": "TestPositionSelector", "start": None, "end": None}]
+                                  }]
                     }]
     }
     return payload
+
 
 def icun_status_from_wikidata(string):
     sparql = SPARQLWrapper("http://query.wikidata.org/sparql")
     sparql.setQuery("""
     SELECT ?statusLabel WHERE {{
     ?item wdt:P141 ?status.
-    ?item rdfs:label "{}"@en
+    {{ ?item rdfs:label "{}"@en }} UNION {{ ?item skos:altLabel "{}"@en }}
         SERVICE wikibase:label {{bd:serviceParam wikibase:language "en" .}}
 }}
-    """.format(string))
+    """.format(string, string))
     sparql.setReturnFormat(JSON)
     result = sparql.query().convert()
     if result['results']['bindings'] and len(result['results']['bindings'])==1:
         return result['results']['bindings'][0]['statusLabel']['value']
     return None
 
-def annotate_EuropePMC_from_CTree(ctree, H):
+
+def annotate_europepmc_from_ctree(ctree, H):
     if ctree.ID[0:3] == "PMC":
         url = "http://europepmc.org/articles/{}/".format(ctree.ID)
     else:
@@ -53,7 +55,6 @@ def annotate_EuropePMC_from_CTree(ctree, H):
                 post_tidy = result['post'].replace("( ", "(")
                 payload=payload_builder(url, annotation, pre_tidy, result['exact'], post_tidy)
                 H.create(payload)
-
 
 
 parser = argparse.ArgumentParser(description='Read Mined Terms from ContentMine and'
@@ -71,6 +72,5 @@ H = hypothesisapi.API(args.user, args.api_key)
 
 cproject = CProject("./", args.cproject)
 
-
 for ctree in cproject.get_ctrees():
-    annotate_EuropePMC_from_CTree(ctree, H)
+    annotate_europepmc_from_ctree(ctree, H)
