@@ -27,17 +27,25 @@ def payload_builder(url, annotation_content, annotation_pre=None, annotation_exa
 def icun_status_from_wikidata(string):
     sparql = SPARQLWrapper("http://query.wikidata.org/sparql")
     sparql.setQuery("""
-    SELECT ?statusLabel WHERE {{
+    SELECT ?statusLabel ?sitelink WHERE {{
     ?item wdt:P141 ?status.
     {{ ?item rdfs:label "{}"@en }} UNION {{ ?item skos:altLabel "{}"@en }}
+          OPTIONAL {{ ?sitelink schema:about ?item .
+                ?sitelink schema:isPartOf <https://en.wikipedia.org/> .
+                }}
         SERVICE wikibase:label {{bd:serviceParam wikibase:language "en" .}}
 }}
     """.format(string, string))
     sparql.setReturnFormat(JSON)
     result = sparql.query().convert()
-    if result['results']['bindings'] and len(result['results']['bindings'])==1:
-        return result['results']['bindings'][0]['statusLabel']['value']
-    return None
+    if result['results']['bindings'] and len(result['results']['bindings']) == 1:
+        single_result = result['results']['bindings'][0]
+        if 'sitelink' in single_result:
+            link = single_result['sitelink']['value']
+        else:
+            link = None
+        return [ single_result['statusLabel']['value'], link]
+    return None, None
 
 
 def annotate_europepmc_from_ctree(ctree, H):
@@ -48,9 +56,11 @@ def annotate_europepmc_from_ctree(ctree, H):
     results = (ctree.show_results("species"))
     if results and "binomial" in results and results['binomial']:
         for result in results['binomial']:
-            status = icun_status_from_wikidata(result['exact'])
+            status, link = icun_status_from_wikidata(result['exact'])
             if status:
-                annotation = "according to wikidata " + result['exact'] + " has IUCN redlist status: " + status
+                annotation = "according to Wikidata " + result['exact'] + " has IUCN redlist status: " + status
+                if link:
+                    annotation = annotation + "see: " + link
                 pre_tidy = result['pre'].replace("( ", "(")
                 post_tidy = result['post'].replace("( ", "(")
                 payload=payload_builder(url, annotation, pre_tidy, result['exact'], post_tidy)
