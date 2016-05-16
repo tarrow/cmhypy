@@ -19,7 +19,8 @@ def payload_builder(url, annotation_content, annotation_pre=None, annotation_exa
                                   "exact": annotation_exact,
                                   "suffix": annotation_suffix
                                   }]
-                    }]
+                    }],
+        "tags": ["a.is"]
     }
     return payload
 
@@ -60,7 +61,7 @@ def annotate_europepmc_from_ctree(ctree, H):
             if status:
                 annotation = "according to Wikidata " + result['exact'] + " has IUCN redlist status: " + status
                 if link:
-                    annotation = annotation + "see: " + link
+                    annotation = annotation + " see: " + link
                 pre_tidy = result['pre'].replace("( ", "(")
                 post_tidy = result['post'].replace("( ", "(")
                 payload=payload_builder(url, annotation, pre_tidy, result['exact'], post_tidy)
